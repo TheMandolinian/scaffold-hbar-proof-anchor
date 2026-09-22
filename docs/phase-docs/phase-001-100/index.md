@@ -8,6 +8,15 @@ Status: **SEALED**
 - [Findings](phase%20001/findings.md)
 - [Closeout](phase%20001/closeout.md)
 
+
+## Phase 002 — Canonical Proof + Digest Core
+
+Status: **IMPLEMENTATION IN PROGRESS**
+
+- [Contract](phase%20002/contract.md)
+- [Findings](phase%20002/findings.md)
+- Closeout: created after the implementation squash merge.
+
 ## Pipeline
 
 - [Pipeline 001–010](pipeline/pipeline-001-010.md)
