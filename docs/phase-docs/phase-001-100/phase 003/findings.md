@@ -417,21 +417,169 @@ It is not the final Phase 003 implementation squash anchor.
 
 ## Slice 003 — Pinata upload / round trip
 
-Pending implementation.
+Status: COMPLETE ON PHASE BRANCH.
 
-Record here:
+### Integration mechanism selected
 
-- integration mechanism actually selected;
-- why that mechanism was minimal;
-- secret-handling boundary;
-- returned CID behavior;
-- live upload evidence;
-- live retrieval evidence;
-- byte-count comparison;
-- digest comparison;
-- tests;
-- gate results;
-- commit hash.
+Phase 003 uses:
+
+- exact production dependency `pinata@2.5.6`;
+- Pinata SDK server-side only for signed upload-capability creation;
+- platform `fetch`, `FormData`, and `File` for the direct artifact upload;
+- existing Phase 003 CID normalization for provider-returned storage identity;
+- existing controlled IPFS retrieval for readback.
+
+The SDK was not used as a browser-side upload client.
+
+Inspection of the installed `pinata@2.5.6` runtime showed that its normal file-upload path constructs an `Authorization: Bearer ...` header even when an upload URL is supplied.
+
+The repository therefore keeps the persistent Pinata JWT exclusively at the server boundary and uses the signed upload capability with ordinary platform HTTP primitives for the actual artifact transfer.
+
+### Dependency decision
+
+`pinata@2.5.6` is pinned exactly.
+
+Repository-native inspection of the installed package observed:
+
+- version: `2.5.6`;
+- license: MIT;
+- ordinary runtime dependencies: none;
+- optional React peer dependencies only;
+- signed upload capability API available;
+- upload response includes a CID;
+- signed capability supports expiry and maximum-file-size restriction.
+
+The dependency is retained narrowly for Pinata-specific signed-capability generation rather than as a generic storage abstraction.
+
+### Production files
+
+Added:
+
+- `packages/nextjs/app/api/storage/ipfs/upload-auth/route.ts`
+- `packages/nextjs/utils/proof-anchor/storageUpload.ts`
+
+Modified configuration/dependency records:
+
+- `packages/nextjs/.env.example`
+- `packages/nextjs/package.json`
+- `yarn.lock`
+
+### Test files
+
+Added:
+
+- `packages/nextjs/tests/proof-anchor/storage-upload-auth-route.test.ts`
+- `packages/nextjs/tests/proof-anchor/storage-upload.test.ts`
+
+### Server-side credential boundary
+
+The repository introduces one server-only secret:
+
+`PINATA_JWT`
+
+The committed `.env.example` contains only a blank placeholder.
+
+The JWT is:
+
+- read only by the server upload-authorization route;
+- not exposed through a `NEXT_PUBLIC_` variable;
+- not passed into `storageUpload.ts`;
+- not written into canonical proof identity;
+- not printed by the live-evidence runner;
+- not committed to Git.
+
+The live development JWT was supplied through the Codespaces secret environment.
+
+### Signed upload capability
+
+The upload-authorization route:
+
+- accepts a requested artifact byte count;
+- validates that it is a non-negative safe integer;
+- rejects malformed and non-object JSON;
+- requires server-side Pinata configuration;
+- creates a public signed upload capability;
+- fixes capability lifetime to 60 seconds;
+- narrows `maxFileSize` to the requested content length, using 1 byte for the zero-byte case so the capability remains size-bounded;
+- maps provider authorization failure to a bounded route error.
+
+The claimed byte count is capability narrowing only.
+
+It is not treated as Phase 004 trusted admission evidence.
+
+### Direct upload behavior
+
+`uploadIpfsArtifact`:
+
+- accepts a `File`;
+- accepts a signed HTTPS upload capability;
+- rejects non-HTTPS signed upload URLs before network use;
+- performs a direct POST using platform `fetch` and `FormData`;
+- sends the artifact as file bytes;
+- requests public storage;
+- requests CIDv1 upload behavior;
+- sends no persistent bearer credential;
+- requires a provider response containing a CID;
+- reduces the provider CID to canonical Proof Anchor `ipfs://` identity through the existing storage-identity implementation.
+
+Provider-specific metadata does not expand the six-field proof schema.
+
+### Slice 003 observed tests
+
+Upload-authorization route tests:
+
+- tests: 7
+- passed: 7
+- failed: 0
+
+Storage-upload helper tests:
+
+- tests: 7
+- passed: 7
+- failed: 0
+
+Integrated Proof Anchor suite after Slice 003:
+
+- tests: 69
+- passed: 69
+- failed: 0
+
+### Slice 003 observed gates
+
+- `yarn check-types`: PASS
+- lint: PASS with zero lint warnings or errors
+- production build: PASS
+- `git diff --check`: PASS
+- staged `git diff --cached --check`: PASS
+- pre-commit lint-staged gate: PASS
+- Minimality/security scope review: PASS
+
+The production build continued to emit the inherited DaisyUI / Google Fonts CSS ordering warning.
+
+The build completed successfully and Phase 003 did not absorb unrelated scaffold CSS cleanup.
+
+### Slice 003 Minimality Gate
+
+The final Slice 003 implementation review found:
+
+- one public upload helper;
+- one upload-authorization route;
+- no generic storage-provider interface;
+- no provider registry;
+- no adapter/factory/plugin abstraction;
+- no browser-exposed Pinata JWT;
+- no HCS implementation;
+- no Mirror Node implementation;
+- no Hedera locator implementation;
+- no Phase 004 server-admission implementation.
+
+### Slice 003 implementation commit
+
+`94afa94ba727c9b257387ee242fce64a66e1cb35` — Phase 003 — add Pinata signed upload path
+
+This is a phase-branch commit.
+
+It is not the final Phase 003 implementation squash anchor.
 
 ## Storage conformance vectors
 
@@ -441,25 +589,44 @@ Record exact valid and invalid vectors only after they exist in this repository.
 
 ## Live evidence
 
-Pending implementation.
+A real Phase 003 storage round trip was executed from the bounty repository after Slice 003 implementation.
 
-If live integration is performed, record only public/non-secret evidence such as:
+Observed public/non-secret evidence:
 
-- canonical CID;
-- canonical `ipfs://` reference;
-- artifact byte count;
-- original digest;
-- retrieved digest;
-- digest match result;
-- retrieved byte count;
-- byte-count match result.
+- upload authorization: PASS
+- signed upload capability: obtained but intentionally not printed
+- upload: PASS
+- canonical `storage_ref`: `ipfs://bafkreieu5no6jfbwcp6qjdojgoj2wbuhoqc7vi44ch2t5e4gbazttaz6py`
+- controlled retrieval gateway: `https://gateway.pinata.cloud`
+- retrieval attempts required: 1
+- original byte count: 64
+- retrieved byte count: 64
+- byte-count match: true
+- original SHA-256: `94eb5de4943613fd048dc93393ab06877405faa39c11f53e9386083339833e7e`
+- retrieved SHA-256: `94eb5de4943613fd048dc93393ab06877405faa39c11f53e9386083339833e7e`
+- digest match: true
+- exact-byte match: true
+- live runner exit code: 0
+- ephemeral live runner removed after execution
+- post-run repository diff check: PASS
 
-Never record:
+The live runner constructed deterministic 64-byte artifact data, requested a signed upload capability through the repository route, uploaded through the repository direct-upload helper, normalized the returned CID into canonical Proof Anchor storage identity, retrieved the artifact through the repository controlled-retrieval helper, and independently compared the returned byte count and SHA-256 digest with the original artifact.
 
-- Pinata JWT;
-- bearer token;
-- API secret;
-- private credential material.
+No Pinata JWT, bearer token, signed upload capability, API secret, or other private credential material was recorded.
+
+### What this live evidence does not prove
+
+This live evidence does not prove:
+
+- permanent IPFS availability;
+- independent replication by multiple storage providers;
+- that every public IPFS gateway will return the artifact forever;
+- Phase 004 server admission;
+- HCS consensus commitment;
+- Mirror Node readback;
+- browser-side final verification.
+
+It proves only the bounded Phase 003 storage round trip observed above.
 
 ## Security observations
 
@@ -472,10 +639,16 @@ Current repository-native Phase 003 observations:
 - canonical storage references reject malformed and noncanonical CID identity before retrieval;
 - Slice 002 retrieves exact response bytes without assigning verification authority to the transport layer;
 - retrieval failure remains distinct from cryptographic mismatch;
-- no Pinata credential handling exists yet because Slice 003 has not been implemented;
+- the persistent Pinata credential is confined to the server upload-authorization boundary;
 - no Phase 004 hostile-input admission behavior is claimed by Phase 003.
 
-Full provider credential placement and live transport observations remain pending Slice 003.
+Provider credential placement and the live Phase 003 transport path have now been observed.
+
+The persistent provider credential remained server-side during the live round trip.
+
+The signed upload capability was intentionally not printed or recorded.
+
+The canonical proof identity contains only the normalized IPFS CID rather than Pinata account, URL, credential, or response metadata.
 
 ## Minimality findings
 
