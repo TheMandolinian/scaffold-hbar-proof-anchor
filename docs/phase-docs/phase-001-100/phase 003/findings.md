@@ -67,32 +67,177 @@ The primary new concerns are:
 
 ## Dependency decisions
 
-Pending implementation.
+### `multiformats@14.0.5`
 
-For every Phase 003 dependency actually added, record:
+Classification:
 
-- package;
-- version;
-- production/dev classification;
-- exact purpose;
-- reason it is necessary;
-- rejected simpler alternatives where relevant.
+- production dependency
+- pinned to the exact tested version `14.0.5`
+
+Purpose:
+
+- standards-aware CID parsing;
+- CIDv0 to CIDv1 conversion;
+- CIDv1 base32 serialization;
+- deterministic canonical IPFS identity.
+
+Reason required:
+
+CID is a structured multiformat identifier. Implementing CID parsing, version conversion, multibase handling, and binary identity preservation with hand-written string logic or regular expressions would introduce unnecessary protocol risk.
+
+The repository therefore uses the established `multiformats` implementation for the protocol-sensitive CID boundary.
+
+The dependency was initially resolved by Yarn as `^14.0.5` and was then intentionally pinned to exactly `14.0.5` before production code was written against it.
+
+Repository-native API smoke evidence showed:
+
+- CIDv0 parsing succeeded;
+- CIDv0 to CIDv1 conversion succeeded;
+- the underlying multihash remained identical;
+- CIDv1 base32 serialization was lowercase;
+- canonical CID text reparsed exactly.
+
+No provider SDK or IPFS HTTP client was added during Slice 001.
 
 ## Slice 001 — CID and storage-reference core
 
-Pending implementation.
+Status: COMPLETE ON PHASE BRANCH.
 
-Record here:
+### Production files
 
-- files added or modified;
-- CID library selected;
-- accepted CID/reference forms;
-- canonical representation;
-- normalization observations;
-- rejected malformed forms;
-- exact tests and vectors;
-- gate results;
-- commit hash.
+Added:
+
+- `packages/nextjs/utils/proof-anchor/storageIdentity.ts`
+
+Modified dependency records:
+
+- `packages/nextjs/package.json`
+- `yarn.lock`
+
+### Test files
+
+Added:
+
+- `packages/nextjs/tests/proof-anchor/storage-identity.test.ts`
+
+### Implemented public surface
+
+Slice 001 exposes exactly three storage-identity operations:
+
+- `normalizeIpfsCid`
+- `normalizeIpfsStorageRef`
+- `parseCanonicalIpfsStorageRef`
+
+Internal parsing details remain private.
+
+### Canonical identity behavior
+
+The implemented canonical CID representation is:
+
+- CIDv1;
+- base32;
+- lowercase.
+
+The implemented canonical storage reference form is:
+
+`ipfs://<canonical-cid>`
+
+A valid CIDv0 may be accepted as normalization input, but it is converted to the canonical CIDv1 base32 lowercase representation.
+
+A canonical CIDv1 base32 value remains stable when normalized again.
+
+### Provider-neutrality behavior
+
+Canonical storage identity contains no:
+
+- Pinata URL;
+- Pinata account identifier;
+- gateway origin;
+- HTTP query parameter;
+- provider-specific metadata.
+
+The canonical result is an `ipfs://` reference derived solely from the normalized CID.
+
+### Rejected identity forms
+
+Repository-native tests demonstrate rejection of:
+
+- empty CID input;
+- malformed CID input;
+- surrounding whitespace;
+- gateway HTTP URLs supplied as storage identity;
+- path material after the root CID;
+- query material after the root CID;
+- fragment material after the root CID;
+- empty `ipfs://` references;
+- missing `ipfs://` scheme where canonical-reference parsing requires it;
+- uppercase `IPFS://` scheme;
+- noncanonical CIDv0 text supplied to the canonical-reference parser.
+
+### Canonical parser behavior
+
+The canonical-reference parser is intentionally stricter than the normalization helper.
+
+Normalization may convert supported alternate CID representations into the canonical representation.
+
+Canonical parsing requires that the supplied storage reference already be exactly canonical.
+
+This distinction allows the implementation to normalize candidate storage identities while still enforcing exact canonical identity at boundaries that require it.
+
+### Slice 001 observed tests
+
+New Slice 001 storage-identity tests:
+
+- tests: 12
+- passed: 12
+- failed: 0
+
+Integrated Proof Anchor suite after Slice 001:
+
+- tests: 45
+- passed: 45
+- failed: 0
+
+### Slice 001 observed gates
+
+- typecheck: PASS
+- lint: PASS with zero lint warnings or errors
+- production build: PASS
+- `git diff --check`: PASS
+- staged `git diff --cached --check`: PASS
+- pre-commit lint-staged gate: PASS
+
+The production build continued to emit the inherited DaisyUI / Google Fonts CSS ordering warning. The build completed successfully and Slice 001 did not absorb unrelated scaffold CSS cleanup.
+
+### Slice 001 Minimality Gate
+
+The Slice 001 public API was inspected symbol-by-symbol.
+
+The production surface contains only the three operations required for:
+
+- CID normalization;
+- canonical `ipfs://` construction;
+- exact canonical storage-reference parsing.
+
+The scope review found no:
+
+- network request;
+- Pinata integration;
+- gateway retrieval implementation;
+- HCS behavior;
+- Mirror Node behavior;
+- Hedera locator behavior;
+- environment configuration.
+
+A test string containing `https://gateway.example/...` exists only to prove that gateway URLs are rejected as canonical storage identity.
+
+### Slice 001 implementation commit
+
+`529a365b78992b9b2dc539db87b0d24ad8f9ccf7` — Phase 003 — add canonical IPFS identity
+
+This is a phase-branch commit.
+
+It is not the final Phase 003 implementation squash anchor.
 
 ## Slice 002 — Controlled retrieval
 
