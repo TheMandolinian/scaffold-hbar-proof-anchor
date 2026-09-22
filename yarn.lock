@@ -1391,6 +1391,7 @@ __metadata:
     assert: ^2.1.0
     blo: ^1.2.0
     buffer: ^6.0.3
+    canonicalize: 5.1.0
     crypto-browserify: ^3.12.1
     daisyui: ^5.0.9
     eslint: ^9.23.0
@@ -2484,6 +2485,15 @@ __metadata:
   version: 1.0.30001776
   resolution: "caniuse-lite@npm:1.0.30001776"
   checksum: 78df45dfce9162b218c766605a0184d8478f8aa6165bb21aa840e5ce5066332d34c6823bcd12e604887b4e221bb4abde195d62d5023bd30f89d089c5896e0bcc
+  languageName: node
+  linkType: hard
+
+"canonicalize@npm:5.1.0":
+  version: 5.1.0
+  resolution: "canonicalize@npm:5.1.0"
+  bin:
+    canonicalize: bin/canonicalize.js
+  checksum: fa848e5b2b393f5cb0eda7dc18a96b56fb7aad3df32aae385f4cd22369c4ccc5049bfc622a183bcd525842af1c556aa97205fa9f5bb6a920809678d9eff5635f
   languageName: node
   linkType: hard
 
