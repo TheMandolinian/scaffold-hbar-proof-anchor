@@ -2,11 +2,11 @@
 
 ## Phase 001 — Repository Foundation / Clean Scaffold
 
-Status: IMPLEMENTATION IN PROGRESS
+Status: IMPLEMENTATION MERGED — CLOSEOUT IN PROGRESS
 
 - [Contract](phase%20001/contract.md)
 - [Findings](phase%20001/findings.md)
-- Closeout: written after the implementation squash merge so the real merge anchor can be recorded.
+- [Closeout](phase%20001/closeout.md)
 
 ## Pipeline
 
