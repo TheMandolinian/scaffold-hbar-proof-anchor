@@ -1402,6 +1402,7 @@ __metadata:
     next: ^15.2.8
     next-nprogress-bar: ^2.3.13
     next-themes: ^0.3.0
+    pinata: 2.5.6
     postcss: ^8.4.45
     prettier: ^3.5.3
     process: ^0.11.10
@@ -5524,6 +5525,21 @@ __metadata:
   bin:
     pidtree: bin/pidtree.js
   checksum: 8fbc073ede9209dd15e80d616e65eb674986c93be49f42d9ddde8dbbd141bb53d628a7ca4e58ab5c370bb00383f67d75df59a9a226dede8fa801267a7030c27a
+  languageName: node
+  linkType: hard
+
+"pinata@npm:2.5.6":
+  version: 2.5.6
+  resolution: "pinata@npm:2.5.6"
+  peerDependencies:
+    react: ">=16.8.0"
+    react-dom: ">=16.8.0"
+  peerDependenciesMeta:
+    react:
+      optional: true
+    react-dom:
+      optional: true
+  checksum: 33eeb4e67e566e7e9aa490e2ec547361ee42c5355c853028c10818076b52f4b5e173f7aa18749b85820b4e2f2a102083a2d29f0333db994f5de9fe32b3ca25ca
   languageName: node
   linkType: hard
 
