@@ -6,7 +6,7 @@ Phase 001 — Repository Foundation / Clean Scaffold
 
 ## Status
 
-Implementation merged. Documentation closeout in progress.
+SEALED.
 
 ## Canonical implementation anchor
 
@@ -51,8 +51,10 @@ Those remain assigned to later bounded phases.
 
 ## Docs merge anchor
 
-PENDING — populated after the documentation PR is squash-merged.
+`91a7a5b7669f46f41c9dc680cfe46d91312b526e`
+
+This is the GitHub squash-merge commit for documentation PR #2.
 
 ## Anchor repair
 
-Required after the docs merge so this record can contain the real documentation merge hash.
+Completed by the final record-only anchor-repair stage.
