@@ -21,6 +21,7 @@
     "canonicalize": "5.1.0",
     "crypto-browserify": "^3.12.1",
     "daisyui": "^5.0.9",
+    "multiformats": "14.0.5",
     "next": "^15.2.8",
     "next-nprogress-bar": "^2.3.13",
     "next-themes": "^0.3.0",
