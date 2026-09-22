@@ -249,11 +249,52 @@ Slice 002 implementation commit:
 
 This is a branch commit and is not a final Phase 002 merge anchor.
 
+## Final implementation gate
+
+After Slice 002 and the final Minimality Gate cleanup, the complete Phase 002 implementation was exercised again.
+
+Observed:
+
+- tests: 33
+- passed: 33
+- failed: 0
+- typecheck: PASS
+- lint: PASS with zero lint warnings or errors
+- production build: PASS
+- `git diff --check`: PASS
+- worktree after the minimality commit: clean
+
+The production build continued to emit the inherited generated-CSS warning concerning Google Fonts `@import` ordering. The build completed successfully, so Phase 002 did not absorb unrelated scaffold CSS cleanup.
+
+### Final Minimality Gate
+
+The public Phase 002 proof-core surface was inspected symbol-by-symbol.
+
+`PROOF_V1_KEYS` had no consumer outside `proof.ts`, so its unnecessary export was removed.
+
+No production behavior was changed by that cleanup.
+
+After the cleanup:
+
+- all 33 Proof Anchor tests still passed
+- typecheck still passed
+- lint still passed
+- production build still passed
+- `git diff --check` still passed
+- the repository pre-commit lint-staged gate passed
+
+Minimality cleanup commit:
+
+`47f4db097916d0e3dfe38099fe5cbb1db72c0d36` — Phase 002 — tighten proof core public API
+
+This is a branch commit and is not a final Phase 002 merge anchor.
+
 ## Remaining Phase 002 work
 
 Still required:
 
-- final Phase 002 integrated gates
-- final Minimality Gate review
-- implementation PR / CI / squash-merge lifecycle
-- Phase 002 closeout after the real implementation squash merge exists
+- implementation PR and GitHub CI
+- squash merge and capture of the real implementation squash hash
+- Phase 002 closeout documentation from updated `main`
+- closeout documentation PR and real docs squash hash
+- anchor-repair PR using the real documentation squash hash
