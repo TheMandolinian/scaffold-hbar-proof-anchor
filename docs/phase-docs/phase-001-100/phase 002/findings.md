@@ -144,15 +144,116 @@ Slice 001 commit:
 
 This is a branch commit and is not a final Phase 002 merge anchor.
 
+## Slice 002 — Strict JSON and canonical proof bytes
+
+Implemented:
+
+- `packages/nextjs/utils/proof-anchor/canonical.ts`
+- `packages/nextjs/tests/proof-anchor/canonical.test.ts`
+- `packages/nextjs/tests/proof-anchor/conformance.test.ts`
+- `packages/nextjs/tests/proof-anchor/fixtures/proof-v1-canonical.fixture`
+- `packages/nextjs/tests/proof-anchor/fixtures/proof-v1-noncanonical.fixture`
+- `packages/nextjs/tests/proof-anchor/fixtures/proof-v1-duplicate-key.fixture`
+
+Dependency added:
+
+- `canonicalize@5.1.0`, pinned exactly
+
+The dependency was selected only for RFC 8785-compatible JSON canonicalization.
+
+A repository-local smoke check confirmed the installed package exports the expected callable API and deterministically canonicalizes object property order.
+
+### Strict JSON parsing
+
+Implemented raw JSON parsing that rejects duplicate object keys before ordinary `JSON.parse` can collapse them.
+
+Duplicate detection compares decoded JSON key values, so escaped and unescaped spellings of the same key are treated as duplicates.
+
+Malformed JSON is rejected.
+
+Malformed UTF-8 proof bytes are rejected before proof validation.
+
+### Canonical proof serialization
+
+Implemented:
+
+- schema validation before canonicalization
+- deterministic RFC 8785-compatible canonical JSON
+- UTF-8 canonical proof bytes
+- exact canonical-byte parsing
+- byte-for-byte rejection of semantically valid but noncanonical encodings
+
+Canonical proof parsing therefore distinguishes:
+
+- valid canonical proof bytes
+- valid proof data encoded noncanonically
+- malformed or invalid proof data
+
+No CID parsing, CID normalization, IPFS transport, or other Phase 003 storage behavior was introduced.
+
+### Canonicalization conformance
+
+Repository-native tests cover:
+
+- fixed canonical Proof Anchor representation
+- source insertion-order independence
+- exact UTF-8 canonical bytes
+- valid pretty-printed JSON parsing
+- exact canonical-byte acceptance
+- reordered but semantically valid JSON rejection as noncanonical
+- leading/trailing whitespace rejection as noncanonical
+- duplicate top-level key rejection
+- decoded-key duplicate detection
+- malformed JSON rejection
+- six-field schema enforcement after parsing
+- malformed UTF-8 rejection
+- an RFC 8785 canonicalization vector
+- lone-surrogate rejection by the selected JCS implementation
+
+### Stable conformance fixtures
+
+Added exact-byte fixtures for:
+
+- canonical proof bytes
+- semantically valid but noncanonical proof bytes
+- duplicate-key proof JSON
+
+Observed fixture byte lengths:
+
+- canonical: 227 bytes
+- noncanonical: 227 bytes
+- duplicate-key: 259 bytes
+
+The canonical fixture round-trips byte-for-byte through the canonical proof helpers.
+
+The noncanonical fixture remains semantically parseable but fails canonical-byte validation.
+
+The duplicate-key fixture is rejected before ordinary JSON parsing can collapse the duplicate.
+
+### Slice 002 evidence
+
+Observed after the conformance fixtures were added:
+
+- tests: 33
+- passed: 33
+- failed: 0
+- typecheck: PASS
+- lint: PASS with zero warnings or errors
+- `git diff --check`: PASS
+- staged `git diff --cached --check`: PASS
+- pre-commit lint-staged gate: PASS
+
+Slice 002 implementation commit:
+
+`2eebdb4d13e887fd428d859d1381755ca5221dc9` — Phase 002 — add canonical proof bytes
+
+This is a branch commit and is not a final Phase 002 merge anchor.
+
 ## Remaining Phase 002 work
 
 Still required:
 
-- strict JSON parsing
-- duplicate-key rejection
-- RFC 8785-compatible canonicalization
-- canonical UTF-8 proof bytes
-- parse/canonical validation helpers
-- stable conformance fixtures
-- canonical/noncanonical vectors
 - final Phase 002 integrated gates
+- final Minimality Gate review
+- implementation PR / CI / squash-merge lifecycle
+- Phase 002 closeout after the real implementation squash merge exists
