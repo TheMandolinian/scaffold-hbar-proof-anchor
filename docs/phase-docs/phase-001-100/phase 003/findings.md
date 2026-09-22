@@ -8,9 +8,15 @@ Phase 003 — IPFS Storage + Retrieval
 
 CONTRACT FROZEN.
 
-IMPLEMENTATION IN PROGRESS.
+IMPLEMENTATION COMPLETE ON PHASE BRANCH.
 
-Slice 001 and Slice 002 are complete on the Phase 003 branch.
+LOCAL FINAL GATES PASS.
+
+IMPLEMENTATION PR AND GITHUB CI PENDING.
+
+Slice 001, Slice 002, Slice 003, and storage conformance are complete on the Phase 003 branch.
+
+No final Phase 003 implementation squash anchor exists yet because the implementation PR has not been merged.
 
 This document records only evidence observed in the real bounty repository.
 
@@ -782,54 +788,126 @@ The canonical proof identity contains only the normalized IPFS CID rather than P
 
 ## Minimality findings
 
-Pending final implementation.
+Status: PASS FOR LOCAL IMPLEMENTATION REVIEW.
 
-Before implementation PR:
+The final Phase 003 Minimality Gate inspected the production files, dependencies, exports, route/configuration surface, secret boundary, later-phase leakage, and speculative-abstraction surface.
 
-- inspect every Phase 003 production file;
-- inspect every dependency;
-- inspect every export;
-- inspect every route/configuration path;
-- remove speculative abstractions;
-- record what was removed and why.
+Phase 003 production storage files are limited to:
+
+- `packages/nextjs/utils/proof-anchor/storageIdentity.ts`
+- `packages/nextjs/utils/proof-anchor/storageRetrieval.ts`
+- `packages/nextjs/utils/proof-anchor/storageUpload.ts`
+- `packages/nextjs/app/api/storage/ipfs/upload-auth/route.ts`
+
+Phase 003 adds exactly two pinned production dependencies:
+
+- `multiformats@14.0.5`
+- `pinata@2.5.6`
+
+The storage utility export surface is exactly:
+
+- `normalizeIpfsCid`
+- `normalizeIpfsStorageRef`
+- `parseCanonicalIpfsStorageRef`
+- `retrieveIpfsBytes`
+- `uploadIpfsArtifact`
+
+The Phase 003 environment surface adds one blank committed placeholder:
+
+- `PINATA_JWT=`
+
+The final inspection found:
+
+- no `NEXT_PUBLIC_` Pinata or JWT exposure;
+- no committed Pinata API secret;
+- no HCS submission implementation;
+- no Mirror Node implementation;
+- no Hedera proof-locator implementation;
+- no server-admission implementation;
+- no generic `StorageProvider` abstraction;
+- no provider registry;
+- no storage adapter/factory/plugin registry;
+- no additional conformance fixture file;
+- no production code added solely to satisfy storage conformance.
+
+The permanent round-trip conformance closure changed only the existing storage retrieval test and reused the sealed Phase 002 digest implementation.
+
+No Phase 003 production file, dependency, export, API route, or configuration path was identified as speculative relative to the frozen Phase 003 contract.
+
+The remaining work is repository lifecycle work rather than additional Phase 003 implementation.
 
 ## Final gates
 
-Pending implementation.
+Status: LOCAL FINAL IMPLEMENTATION GATES PASS.
 
-Final observed evidence must include:
+The final local Phase 003 gate was executed on branch state:
 
-- tests:
-- passed:
-- failed:
-- typecheck:
-- lint:
-- production build:
-- `git diff --check`:
-- pre-commit:
-- GitHub CI:
-- Minimality Gate:
+`ffa7df0e9c0b1c44a2c1e8b03c800aba7b81e60b`
 
-No result is recorded until actually observed.
+Observed results:
+
+- Proof Anchor tests: 70
+- passed: 70
+- failed: 0
+- cancelled: 0
+- skipped: 0
+- todo: 0
+- typecheck: PASS
+- lint: PASS with zero lint warnings or errors
+- production build: PASS
+- Phase 003 diff check against sealed Phase 002: PASS
+- final worktree `git diff --check`: PASS
+- dependency inspection: PASS
+- environment-surface inspection: PASS
+- complete storage-export inspection: PASS
+- server-route inspection: PASS
+- prohibited client-secret search: no matches
+- later-phase implementation search: no matches
+- speculative storage-abstraction search: no matches
+- Minimality Gate: PASS
+
+The production build continued to emit the inherited DaisyUI / Google Fonts CSS `@import` ordering warning.
+
+The warning did not fail the build and Phase 003 did not absorb unrelated scaffold CSS cleanup.
+
+The final local gate vector was:
+
+`changes=0 phase_diff=0 tests=0 types=0 lint=0 build=0 deps=0 env=0 exports=0 routes=0 client_secret=1 later_phase=1 abstraction=1 final_diff=0`
+
+For the three negative-search checks, return code `1` is the expected result because no prohibited match was found.
+
+Pre-commit behavior has been exercised by Phase 003 commits, including lint-staged execution on changed TypeScript files. It was not a separate component of the final read-only gate vector above.
+
+GitHub CI is not yet recorded as passing for the Phase 003 implementation branch because the implementation PR has not yet been opened and checked.
+
+No GitHub CI result is claimed prematurely.
 
 ## Remaining Phase 003 work
 
 Completed on the Phase 003 branch:
 
 - Slice 001 — CID and canonical storage-reference core;
-- Slice 002 — controlled retrieval.
-
-Remaining work includes:
-
+- Slice 002 — controlled retrieval;
 - Slice 003 — Pinata reference-provider upload integration;
-- exact-byte live upload/retrieval round trip;
+- real signed-capability upload;
+- real IPFS retrieval;
+- exact-byte live round trip;
 - original-versus-retrieved byte-count comparison;
 - original-versus-retrieved SHA-256 comparison;
-- storage conformance evidence;
+- repository-native storage conformance;
 - live non-secret evidence recording;
-- final Phase 003 security/minimality review;
-- final Phase 003 test and build gates;
-- implementation PR and GitHub CI;
-- post-merge Phase 003 closeout lifecycle.
+- final Phase 003 security review;
+- final Phase 003 Minimality Gate;
+- final local Phase 003 test, typecheck, lint, build, and diff gates.
 
-No Slice 003 or live-provider result is claimed yet.
+Remaining work is lifecycle-only:
+
+- open the Phase 003 implementation PR;
+- observe and record GitHub CI;
+- squash-merge the implementation PR after CI passes;
+- synchronize `main`;
+- record the actual implementation squash hash;
+- perform the repository-governed documentation closeout;
+- perform anchor repair only after the real squash hashes exist.
+
+No additional Phase 003 implementation slice is currently justified by the frozen contract or observed repository state.
