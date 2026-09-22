@@ -1,3 +1,4 @@
+import { sha256Bytes } from "../../utils/proof-anchor/digest";
 import { retrieveIpfsBytes } from "../../utils/proof-anchor/storageRetrieval";
 import assert from "node:assert/strict";
 import test from "node:test";
@@ -26,6 +27,21 @@ test("retrieves exact artifact bytes from the configured gateway origin", async 
   assert.equal(requestedUrl, `https://gateway.example/ipfs/${CID}`);
   assert.equal(requestedMethod, "GET");
   assert.deepEqual(bytes, Uint8Array.from([0x00, 0x41, 0xff, 0x7f]));
+});
+
+test("retrieved bytes reproduce original byte length and Phase 002 SHA-256 digest", async () => {
+  const original = Uint8Array.from([0x00, 0x41, 0xff, 0x7f, 0x42]);
+  const expectedDigest = "78ed3c348bf298650d86f06518bc13cd90c63a9c060e40bb39d684039c7f2781";
+
+  const retrieved = await retrieveIpfsBytes(STORAGE_REF, "https://gateway.example", async () =>
+    byteResponse(Array.from(original)),
+  );
+
+  assert.equal(original.byteLength, 5);
+  assert.equal(sha256Bytes(original), expectedDigest);
+  assert.equal(retrieved.byteLength, original.byteLength);
+  assert.equal(sha256Bytes(retrieved), expectedDigest);
+  assert.deepEqual(retrieved, original);
 });
 
 test("normalizes a trailing slash on the controlled gateway origin", async () => {
