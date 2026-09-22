@@ -289,12 +289,21 @@ Minimality cleanup commit:
 
 This is a branch commit and is not a final Phase 002 merge anchor.
 
+## Implementation merge evidence
+
+Implementation PR #4 passed GitHub CI and was squash-merged.
+
+Canonical implementation anchor:
+
+`f6d77f9853a3ea85048f8dd61a4e41b0a77f71ed`
+
+This is the real squash-merge commit observed on `main`.
+
 ## Remaining Phase 002 work
 
 Still required:
 
-- implementation PR and GitHub CI
-- squash merge and capture of the real implementation squash hash
-- Phase 002 closeout documentation from updated `main`
-- closeout documentation PR and real docs squash hash
-- anchor-repair PR using the real documentation squash hash
+- closeout documentation PR and GitHub CI
+- squash merge and capture of the real documentation squash hash
+- anchor-repair PR replacing the temporary docs anchor
+- final SEALED state after anchor repair
