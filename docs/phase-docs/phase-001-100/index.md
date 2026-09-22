@@ -11,11 +11,11 @@ Status: **SEALED**
 
 ## Phase 002 — Canonical Proof + Digest Core
 
-Status: **IMPLEMENTATION IN PROGRESS**
+Status: **CLOSEOUT IN PROGRESS**
 
 - [Contract](phase%20002/contract.md)
 - [Findings](phase%20002/findings.md)
-- Closeout: created after the implementation squash merge.
+- [Closeout](phase%20002/closeout.md)
 
 ## Pipeline
 
