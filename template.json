@@ -1,0 +1,44 @@
+{
+  "name": "proof-anchor",
+  "description": "Hedera-native Proof Anchor template for independently verifiable artifact commitments.",
+  "create-scaffold-hbar": {
+    "capabilities": {
+      "frontend": ["nextjs-app"],
+      "solidityFramework": ["none"],
+      "packageManager": ["yarn"]
+    },
+    "defaults": {
+      "frontend": "nextjs-app",
+      "solidityFramework": "none",
+      "packageManager": "yarn"
+    },
+    "outro": {
+      "sections": [
+        {
+          "steps": [
+            {
+              "text": "Proof Anchor uses Hedera Consensus Service directly; no Solidity contract deployment is required."
+            }
+          ]
+        },
+        {
+          "title": "Suggested steps",
+          "steps": [
+            {
+              "label": "Copy the env file",
+              "text": "packages/nextjs/.env.example → packages/nextjs/.env"
+            },
+            {
+              "label": "Start the frontend",
+              "command": "{run:next:dev}"
+            },
+            {
+              "label": "Read the project documentation",
+              "text": "See README.md for architecture, configuration, and verification guidance."
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
