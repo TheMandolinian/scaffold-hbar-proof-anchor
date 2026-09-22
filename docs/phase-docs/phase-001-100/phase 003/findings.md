@@ -8,7 +8,9 @@ Phase 003 — IPFS Storage + Retrieval
 
 CONTRACT FROZEN.
 
-IMPLEMENTATION NOT YET STARTED.
+IMPLEMENTATION IN PROGRESS.
+
+Slice 001 and Slice 002 are complete on the Phase 003 branch.
 
 This document records only evidence observed in the real bounty repository.
 
@@ -241,18 +243,177 @@ It is not the final Phase 003 implementation squash anchor.
 
 ## Slice 002 — Controlled retrieval
 
-Pending implementation.
+Status: COMPLETE ON PHASE BRANCH.
 
-Record here:
+### Production files
 
-- configuration introduced;
-- gateway behavior;
-- exact request construction;
-- response-byte behavior;
-- HTTP failure behavior;
-- tests;
-- gate results;
-- commit hash.
+Added:
+
+- `packages/nextjs/utils/proof-anchor/storageRetrieval.ts`
+
+### Test files
+
+Added:
+
+- `packages/nextjs/tests/proof-anchor/storage-retrieval.test.ts`
+
+### Implemented public surface
+
+Slice 002 exposes exactly one production operation:
+
+- `retrieveIpfsBytes`
+
+The following implementation details remain private:
+
+- `FetchLike`
+- `parseGatewayOrigin`
+- `buildGatewayUrl`
+
+No generic storage-provider interface, adapter registry, plugin system, strategy abstraction, or provider factory was introduced.
+
+### Retrieval identity boundary
+
+Controlled retrieval begins from an already-canonical Proof Anchor storage reference.
+
+`retrieveIpfsBytes` does not accept an arbitrary artifact URL as canonical identity.
+
+Request construction first passes the supplied storage reference through:
+
+`parseCanonicalIpfsStorageRef`
+
+Only after canonical IPFS identity is validated does the retrieval layer combine the parsed CID with the separately supplied gateway origin.
+
+This preserves the Phase 003 distinction:
+
+- canonical storage identity = `ipfs://<canonical-cid>`
+- retrieval transport = configured gateway origin
+
+The canonical storage reference does not select the gateway origin, hostname, configured base path, query, fragment, credentials, or transport endpoint. The validated CID is used only as the controlled `/ipfs/<cid>` request path segment.
+
+### Gateway-origin validation
+
+The implemented gateway-origin parser requires:
+
+- a non-empty string;
+- no surrounding whitespace;
+- a valid URL;
+- HTTP or HTTPS protocol;
+- no embedded username or password;
+- no query data;
+- no fragment data;
+- no configured pathname beyond the origin root.
+
+The implementation currently permits both `http:` and `https:` configured gateway origins, consistent with the frozen Phase 003 contract.
+
+This is a configuration rule, not proof-controlled transport selection.
+
+### Exact request construction
+
+For a validated canonical storage reference and controlled gateway origin, Slice 002 constructs:
+
+`<gateway-origin>/ipfs/<canonical-cid>`
+
+The retrieval request uses:
+
+- HTTP method: `GET`
+
+The proof does not supply:
+
+- arbitrary URL;
+- arbitrary hostname;
+- arbitrary path;
+- arbitrary query;
+- arbitrary fragment;
+- arbitrary credentials.
+
+### Exact response-byte behavior
+
+On a successful gateway response, Slice 002 obtains the response body bytes and returns them as a `Uint8Array`.
+
+Repository-native tests demonstrated preservation of exact byte values including:
+
+- `0x00`
+- `0x41`
+- `0xff`
+- `0x7f`
+
+Slice 002 does not calculate the artifact digest itself.
+
+Slice 002 does not decide whether retrieved bytes match a Proof Anchor digest.
+
+Those comparisons remain outside this retrieval primitive.
+
+### Retrieval failure behavior
+
+A non-successful HTTP response is reported as retrieval failure and includes the observed HTTP status.
+
+A transport exception is reported as gateway retrieval failure.
+
+The tests intentionally distinguish these unavailable/transport conditions from artifact mismatch semantics.
+
+Slice 002 therefore does not convert inability to retrieve bytes into a cryptographic mismatch conclusion.
+
+### Slice 002 observed tests
+
+New Slice 002 storage-retrieval tests:
+
+- tests: 10
+- passed: 10
+- failed: 0
+
+Integrated Proof Anchor suite after Slice 002:
+
+- tests: 55
+- passed: 55
+- failed: 0
+
+### Slice 002 observed gates
+
+Observed before the implementation commit:
+
+- direct TypeScript compiler gate, `yarn tsc --noEmit`: PASS
+- lint: PASS with zero lint warnings or errors
+- production build: PASS
+- `git diff --check`: PASS
+- staged `git diff --cached --check`: PASS
+- pre-commit lint-staged gate: PASS
+- post-precommit staged diff check: PASS
+
+The initial attempted command `yarn typecheck` did not exist in the package scripts.
+
+Repository inspection showed the package script is named `check-types`, and the repaired direct compiler gate `yarn tsc --noEmit` passed.
+
+The production build also completed Next.js type-validity checking successfully.
+
+The build continued to emit the inherited DaisyUI / Google Fonts CSS ordering warning. The build completed successfully and Slice 002 did not absorb unrelated scaffold CSS cleanup.
+
+### Slice 002 Minimality and boundary review
+
+The final Slice 002 review confirmed:
+
+- exactly one public production export;
+- gateway parsing remains private;
+- gateway URL construction remains private;
+- canonical `ipfs://` identity is validated before retrieval;
+- canonical proof identity does not select the gateway;
+- no arbitrary proof URL is accepted as storage identity;
+- an optional `fetchImpl` parameter defaults to platform `fetch` and provides deterministic request injection for tests;
+- no Pinata integration exists yet;
+- no environment-variable behavior exists yet;
+- no HCS behavior exists;
+- no Mirror Node behavior exists;
+- no Hedera locator behavior exists;
+- no speculative storage-provider abstraction exists.
+
+A scope scan found no Phase 004-or-later implementation behavior in the Slice 002 production or test files.
+
+### Slice 002 implementation commit
+
+`459e580a91465300e73ffb804339e0e269f58b74` — Phase 003 — add controlled IPFS retrieval
+
+This is a phase-branch commit.
+
+It is not the final Phase 003 implementation squash anchor.
 
 ## Slice 003 — Pinata upload / round trip
 
@@ -302,17 +463,19 @@ Never record:
 
 ## Security observations
 
-Pending implementation.
+Current repository-native Phase 003 observations:
 
-Record actual findings concerning:
+- canonical IPFS identity is parsed independently from gateway transport;
+- gateway host selection is not derived from canonical proof identity;
+- configured gateway origins reject embedded credentials;
+- configured gateway origins reject path, query, and fragment material;
+- canonical storage references reject malformed and noncanonical CID identity before retrieval;
+- Slice 002 retrieves exact response bytes without assigning verification authority to the transport layer;
+- retrieval failure remains distinct from cryptographic mismatch;
+- no Pinata credential handling exists yet because Slice 003 has not been implemented;
+- no Phase 004 hostile-input admission behavior is claimed by Phase 003.
 
-- provider credential placement;
-- gateway control;
-- identity-versus-transport separation;
-- byte preservation;
-- invalid CID handling.
-
-Do not claim Phase 004 hostile-input protections are implemented during Phase 003.
+Full provider credential placement and live transport observations remain pending Slice 003.
 
 ## Minimality findings
 
@@ -348,4 +511,22 @@ No result is recorded until actually observed.
 
 ## Remaining Phase 003 work
 
-All Phase 003 implementation remains pending at this contract-freeze checkpoint.
+Completed on the Phase 003 branch:
+
+- Slice 001 — CID and canonical storage-reference core;
+- Slice 002 — controlled retrieval.
+
+Remaining work includes:
+
+- Slice 003 — Pinata reference-provider upload integration;
+- exact-byte live upload/retrieval round trip;
+- original-versus-retrieved byte-count comparison;
+- original-versus-retrieved SHA-256 comparison;
+- storage conformance evidence;
+- live non-secret evidence recording;
+- final Phase 003 security/minimality review;
+- final Phase 003 test and build gates;
+- implementation PR and GitHub CI;
+- post-merge Phase 003 closeout lifecycle.
+
+No Slice 003 or live-provider result is claimed yet.
