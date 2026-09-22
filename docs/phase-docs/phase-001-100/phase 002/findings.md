@@ -299,11 +299,23 @@ Canonical implementation anchor:
 
 This is the real squash-merge commit observed on `main`.
 
-## Remaining Phase 002 work
+## Documentation merge evidence
 
-Still required:
+Documentation PR #5 passed GitHub CI and was squash-merged.
 
-- closeout documentation PR and GitHub CI
-- squash merge and capture of the real documentation squash hash
-- anchor-repair PR replacing the temporary docs anchor
-- final SEALED state after anchor repair
+Canonical documentation anchor:
+
+`e082fbaae63e09efc03b400721f3d21ccd6ffa5b`
+
+This is the real documentation squash-merge commit observed on `main`.
+
+## Final anchor repair
+
+The final record-only anchor-repair stage:
+
+- replaces the temporary documentation anchor with the real PR #5 squash hash
+- marks Phase 002 SEALED in the closeout record
+- marks Phase 002 SEALED in the phase index
+- changes no production implementation
+
+Merging this record-only stage completes Phase 002.

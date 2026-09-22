@@ -6,11 +6,7 @@ Phase 002 — Canonical Proof + Digest Core
 
 ## Status
 
-CLOSEOUT IN PROGRESS.
-
-Implementation is merged and verified.
-
-The phase becomes SEALED only after the documentation squash merge is recorded and the final anchor-repair stage is merged.
+SEALED.
 
 ## Canonical implementation anchor
 
@@ -117,10 +113,10 @@ Storage-network semantics remain assigned to Phase 003 — IPFS Storage + Retrie
 
 ## Docs merge anchor
 
-`TEMPORARY — pending documentation PR squash merge`
+`e082fbaae63e09efc03b400721f3d21ccd6ffa5b`
 
-This temporary value must be replaced with the real GitHub squash-merge commit from the Phase 002 documentation PR.
+This is the GitHub squash-merge commit for documentation PR #5.
 
 ## Anchor repair
 
-Pending the real documentation squash-merge anchor.
+Completed by the final record-only anchor-repair stage.
