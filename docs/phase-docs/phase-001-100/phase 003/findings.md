@@ -8,15 +8,21 @@ Phase 003 — IPFS Storage + Retrieval
 
 CONTRACT FROZEN.
 
-IMPLEMENTATION COMPLETE ON PHASE BRANCH.
+IMPLEMENTATION MERGED TO MAIN.
 
 LOCAL FINAL GATES PASS.
 
-IMPLEMENTATION PR AND GITHUB CI PENDING.
+IMPLEMENTATION PR CI PASS.
 
-Slice 001, Slice 002, Slice 003, and storage conformance are complete on the Phase 003 branch.
+POST-MERGE MAIN CI PASS.
 
-No final Phase 003 implementation squash anchor exists yet because the implementation PR has not been merged.
+CLOSEOUT DOCUMENTATION IN PROGRESS.
+
+Slice 001, Slice 002, Slice 003, and storage conformance are complete.
+
+Canonical implementation squash anchor:
+
+`040fa6325cd2fc421a448decf685d13dcf4e575e`
 
 This document records only evidence observed in the real bounty repository.
 
@@ -878,13 +884,39 @@ For the three negative-search checks, return code `1` is the expected result bec
 
 Pre-commit behavior has been exercised by Phase 003 commits, including lint-staged execution on changed TypeScript files. It was not a separate component of the final read-only gate vector above.
 
-GitHub CI is not yet recorded as passing for the Phase 003 implementation branch because the implementation PR has not yet been opened and checked.
+GitHub CI for implementation PR #7 passed before merge.
 
-No GitHub CI result is claimed prematurely.
+Observed pull-request CI:
+
+- run: `35683799942`
+- job: `106606235363`
+- workflow: `Lint`
+- result: PASS
+
+PR #7 was then squash-merged to `main`.
+
+Observed implementation squash anchor:
+
+`040fa6325cd2fc421a448decf685d13dcf4e575e`
+
+Post-merge `main` CI also passed.
+
+Observed main-push CI:
+
+- run: `35683966709`
+- job: `106606748969`
+- workflow: `Lint`
+- result: PASS
+
+The GitHub workflow covers immutable dependency installation, lint, and typecheck.
+
+The 70-test Proof Anchor suite and production build were observed separately in the local implementation gate and are not represented as GitHub Actions test/build jobs.
+
+Both CI runs emitted GitHub-hosted runner notices concerning Node.js action-runtime deprecation and a future `ubuntu-latest` image migration. Those notices did not fail either workflow.
 
 ## Remaining Phase 003 work
 
-Completed on the Phase 003 branch:
+Completed:
 
 - Slice 001 — CID and canonical storage-reference core;
 - Slice 002 — controlled retrieval;
@@ -898,16 +930,23 @@ Completed on the Phase 003 branch:
 - live non-secret evidence recording;
 - final Phase 003 security review;
 - final Phase 003 Minimality Gate;
-- final local Phase 003 test, typecheck, lint, build, and diff gates.
+- final local Phase 003 test, typecheck, lint, build, and diff gates;
+- implementation PR #7;
+- implementation PR CI;
+- implementation squash merge;
+- synchronization of `main`;
+- post-merge `main` CI;
+- recording of the real implementation squash anchor.
 
-Remaining work is lifecycle-only:
+Remaining work is closeout lifecycle only:
 
-- open the Phase 003 implementation PR;
-- observe and record GitHub CI;
-- squash-merge the implementation PR after CI passes;
+- complete and review Phase 003 closeout documentation;
+- open the Phase 003 documentation PR;
+- observe documentation PR CI;
+- squash-merge the documentation PR;
 - synchronize `main`;
-- record the actual implementation squash hash;
-- perform the repository-governed documentation closeout;
-- perform anchor repair only after the real squash hashes exist.
+- record the real documentation squash hash;
+- perform the final record-only anchor-repair stage;
+- mark Phase 003 `SEALED` only after anchor repair is merged.
 
 No additional Phase 003 implementation slice is currently justified by the frozen contract or observed repository state.
