@@ -6,11 +6,13 @@ Phase 003 — IPFS Storage + Retrieval
 
 ## Status
 
-CLOSEOUT DOCUMENTATION IN PROGRESS.
+SEALED.
 
-Implementation is merged to `main`.
+Implementation and closeout documentation are merged to `main`.
 
-The documentation squash anchor and final anchor-repair record do not exist yet and are therefore not predicted here.
+The real implementation and documentation squash anchors are recorded below.
+
+This final record-only anchor-repair stage changes no production implementation.
 
 ## Canonical implementation anchor
 
@@ -529,16 +531,35 @@ That anchor is real and was observed only after PR #7 was squash-merged.
 
 ## Documentation merge anchor
 
-PENDING.
+`508cc0c27ebbb39864606510bbeb0400fc184925`
 
-The documentation squash-merge hash does not exist yet.
+This is the GitHub squash-merge commit for documentation PR #8.
 
-It will be recorded only after the Phase 003 closeout documentation PR is squash-merged.
+Documentation PR #8 passed GitHub CI before merge.
+
+Observed documentation PR CI:
+
+- run: `35684287160`
+- job: `106607704886`
+- workflow: `Lint`
+- result: PASS
+
+Post-merge `main` CI also passed.
+
+Observed documentation post-merge main CI:
+
+- run: `35684403193`
+- job: `106608048467`
+- workflow: `Lint`
+- result: PASS
 
 ## Anchor repair
 
-PENDING.
+Completed by the final record-only anchor-repair stage.
 
-The final record-only anchor-repair stage will occur only after the real documentation squash hash exists.
+This stage:
 
-Phase 003 must not be marked `SEALED` until that repository-governed closeout lifecycle is complete.
+- records the real documentation squash anchor;
+- records documentation PR and post-merge CI evidence;
+- marks Phase 003 `SEALED`;
+- changes no production implementation.

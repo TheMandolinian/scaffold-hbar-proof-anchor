@@ -19,7 +19,7 @@ Status: **SEALED**
 
 ## Phase 003 — IPFS Storage + Retrieval
 
-Status: **CLOSEOUT IN PROGRESS**
+Status: **SEALED**
 
 - [Contract](phase%20003/contract.md)
 - [Findings](phase%20003/findings.md)

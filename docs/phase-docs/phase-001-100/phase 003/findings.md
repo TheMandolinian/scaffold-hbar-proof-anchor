@@ -14,15 +14,27 @@ LOCAL FINAL GATES PASS.
 
 IMPLEMENTATION PR CI PASS.
 
-POST-MERGE MAIN CI PASS.
+POST-MERGE IMPLEMENTATION CI PASS.
 
-CLOSEOUT DOCUMENTATION IN PROGRESS.
+CLOSEOUT DOCUMENTATION MERGED TO MAIN.
+
+DOCUMENTATION PR CI PASS.
+
+POST-MERGE DOCUMENTATION CI PASS.
+
+FINAL ANCHOR REPAIR COMPLETE.
+
+SEALED.
 
 Slice 001, Slice 002, Slice 003, and storage conformance are complete.
 
 Canonical implementation squash anchor:
 
 `040fa6325cd2fc421a448decf685d13dcf4e575e`
+
+Canonical documentation squash anchor:
+
+`508cc0c27ebbb39864606510bbeb0400fc184925`
 
 This document records only evidence observed in the real bounty repository.
 
@@ -914,39 +926,45 @@ The 70-test Proof Anchor suite and production build were observed separately in 
 
 Both CI runs emitted GitHub-hosted runner notices concerning Node.js action-runtime deprecation and a future `ubuntu-latest` image migration. Those notices did not fail either workflow.
 
+## Documentation merge evidence
+
+Documentation PR #8 passed GitHub CI and was squash-merged.
+
+Observed documentation PR CI:
+
+- run: `35684287160`
+- job: `106607704886`
+- workflow: `Lint`
+- result: PASS
+
+Canonical documentation anchor:
+
+`508cc0c27ebbb39864606510bbeb0400fc184925`
+
+This is the real documentation squash-merge commit observed on `main`.
+
+Post-merge documentation CI also passed:
+
+- run: `35684403193`
+- job: `106608048467`
+- workflow: `Lint`
+- result: PASS
+
+## Final anchor repair
+
+The final record-only anchor-repair stage:
+
+- records the real PR #8 documentation squash hash;
+- records documentation PR CI;
+- records documentation post-merge `main` CI;
+- marks Phase 003 `SEALED` in the closeout record;
+- marks Phase 003 `SEALED` in the phase index;
+- changes no production implementation.
+
+Merging this record-only stage completes Phase 003.
+
 ## Remaining Phase 003 work
 
-Completed:
+None within the frozen Phase 003 contract.
 
-- Slice 001 — CID and canonical storage-reference core;
-- Slice 002 — controlled retrieval;
-- Slice 003 — Pinata reference-provider upload integration;
-- real signed-capability upload;
-- real IPFS retrieval;
-- exact-byte live round trip;
-- original-versus-retrieved byte-count comparison;
-- original-versus-retrieved SHA-256 comparison;
-- repository-native storage conformance;
-- live non-secret evidence recording;
-- final Phase 003 security review;
-- final Phase 003 Minimality Gate;
-- final local Phase 003 test, typecheck, lint, build, and diff gates;
-- implementation PR #7;
-- implementation PR CI;
-- implementation squash merge;
-- synchronization of `main`;
-- post-merge `main` CI;
-- recording of the real implementation squash anchor.
-
-Remaining work is closeout lifecycle only:
-
-- complete and review Phase 003 closeout documentation;
-- open the Phase 003 documentation PR;
-- observe documentation PR CI;
-- squash-merge the documentation PR;
-- synchronize `main`;
-- record the real documentation squash hash;
-- perform the final record-only anchor-repair stage;
-- mark Phase 003 `SEALED` only after anchor repair is merged.
-
-No additional Phase 003 implementation slice is currently justified by the frozen contract or observed repository state.
+Further proof-lifecycle behavior belongs to later phases.
