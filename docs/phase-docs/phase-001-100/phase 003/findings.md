@@ -583,9 +583,139 @@ It is not the final Phase 003 implementation squash anchor.
 
 ## Storage conformance vectors
 
-Pending implementation.
+Status: COMPLETE ON PHASE BRANCH.
 
-Record exact valid and invalid vectors only after they exist in this repository.
+The frozen Phase 003 contract requires repository-native conformance coverage for valid identity behavior, invalid identity behavior, provider neutrality, retrieval behavior, and exact-byte round-trip behavior.
+
+The repository satisfies those requirements through the permanent storage tests already present under `packages/nextjs/tests/proof-anchor/`.
+
+No additional vector fixture file was added because the executable tests themselves contain the exact storage vectors and expected outcomes.
+
+### Canonical CID vectors
+
+Repository-native constants:
+
+CIDv0 input:
+
+`QmNTiSDCX8Kh6ddnqvH6dxyFEDBcBTyoKE7vki9h6x7LZA`
+
+Canonical CIDv1 base32 lowercase result:
+
+`bafybeiabz5dveh6jsfmuq4xgpbvdbkmgq6bvubo34xqobxczvqazrcrbou`
+
+Canonical storage reference:
+
+`ipfs://bafybeiabz5dveh6jsfmuq4xgpbvdbkmgq6bvubo34xqobxczvqazrcrbou`
+
+The storage-identity tests demonstrate:
+
+- CIDv0 normalizes deterministically to the canonical CIDv1 base32 lowercase representation;
+- an already canonical CIDv1 remains unchanged;
+- CIDv0 and CIDv1 produce the same canonical `ipfs://` storage reference;
+- a normalizable `ipfs://<CIDv0>` reference normalizes to the canonical reference;
+- the canonical reference parses back to the same canonical CID.
+
+### Invalid identity vectors
+
+Repository-native rejection vectors include:
+
+- empty CID input;
+- `not-a-cid`;
+- leading whitespace before an otherwise valid CID;
+- trailing whitespace after an otherwise valid storage reference;
+- a gateway HTTP URL supplied as canonical storage identity;
+- path material appended after the root CID;
+- query material appended after the root CID;
+- fragment material appended after the root CID;
+- empty `ipfs://` reference;
+- raw CID text supplied where an `ipfs://` reference is required;
+- uppercase `IPFS://` scheme supplied where the exact lowercase scheme is required;
+- CIDv0 supplied to the strict canonical-storage-reference parser.
+
+These vectors demonstrate that normalization is explicit while strict canonical parsing rejects noncanonical forms rather than silently broadening the accepted proof identity.
+
+### Provider-neutrality vectors
+
+The repository-native tests demonstrate that canonical storage identity does not contain retrieval-provider configuration.
+
+For the same canonical storage reference:
+
+`ipfs://bafybeiabz5dveh6jsfmuq4xgpbvdbkmgq6bvubo34xqobxczvqazrcrbou`
+
+the controlled retrieval layer separately constructs:
+
+`https://gateway.example/ipfs/bafybeiabz5dveh6jsfmuq4xgpbvdbkmgq6bvubo34xqobxczvqazrcrbou`
+
+The gateway origin is therefore transport configuration rather than canonical storage identity.
+
+The upload tests also demonstrate that a provider-returned CID is reduced to canonical `ipfs://` identity rather than preserving Pinata-specific URL, account, credential, or response metadata.
+
+### Controlled retrieval vectors
+
+Repository-native retrieval tests demonstrate:
+
+- exact response-byte preservation;
+- deterministic `GET` request construction as `/ipfs/<validated-cid>`;
+- normalization of a single trailing slash on the configured gateway origin;
+- rejection of noncanonical storage identity before network access;
+- rejection of CIDv0 in the strict retrieval path before network access;
+- rejection of gateway origins containing path material;
+- rejection of gateway origins containing embedded credentials;
+- rejection of gateway origins containing query material;
+- rejection of gateway origins containing fragment material;
+- rejection of unsupported gateway protocols;
+- HTTP retrieval failure remains distinct from artifact mismatch;
+- transport failure remains distinct from artifact mismatch.
+
+### Exact-byte and digest reproduction vector
+
+The permanent round-trip conformance test uses the exact source bytes:
+
+`00 41 ff 7f 42`
+
+Observed source byte length:
+
+`5`
+
+Expected Phase 002 SHA-256 digest:
+
+`78ed3c348bf298650d86f06518bc13cd90c63a9c060e40bb39d684039c7f2781`
+
+The test retrieves those bytes through `retrieveIpfsBytes`, then requires:
+
+- retrieved byte length equals original byte length;
+- `sha256Bytes(original)` equals the expected digest;
+- `sha256Bytes(retrieved)` equals the same expected digest;
+- retrieved bytes deep-equal the original bytes.
+
+This permanently connects Phase 003 retrieval conformance to the sealed Phase 002 digest implementation instead of introducing a second hashing implementation.
+
+### Storage conformance test evidence
+
+After the permanent round-trip conformance test was added:
+
+- storage retrieval tests: 11
+- storage retrieval passed: 11
+- storage retrieval failed: 0
+- integrated Proof Anchor tests: 70
+- integrated Proof Anchor passed: 70
+- integrated Proof Anchor failed: 0
+- `yarn check-types`: PASS
+- `git diff --check`: PASS
+
+### Storage conformance implementation commit
+
+`52874b9169238fcc0fabc103dd80af9c5427a0cf` — Phase 003 — close storage conformance
+
+This commit changed only:
+
+`packages/nextjs/tests/proof-anchor/storage-retrieval.test.ts`
+
+No production code, dependency, fixture file, provider abstraction, API route, or configuration surface was added for conformance closure.
+
+This is a phase-branch commit.
+
+It is not the final Phase 003 implementation squash anchor.
 
 ## Live evidence
 
