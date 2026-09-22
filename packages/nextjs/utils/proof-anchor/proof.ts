@@ -3,7 +3,7 @@ import { DIGEST_PROFILE_V1, SHA256_HEX_PATTERN } from "./digest";
 export const PROOF_SCHEMA_V1 = "hbar-proof-anchor/v1" as const;
 export const STORAGE_SCHEME_V1 = "ipfs" as const;
 
-export const PROOF_V1_KEYS = [
+const PROOF_V1_KEYS = [
   "schema",
   "digest_profile",
   "artifact_digest",
