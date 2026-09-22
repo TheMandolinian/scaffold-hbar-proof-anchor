@@ -17,6 +17,14 @@ Status: **SEALED**
 - [Findings](phase%20002/findings.md)
 - [Closeout](phase%20002/closeout.md)
 
+## Phase 003 — IPFS Storage + Retrieval
+
+Status: **IMPLEMENTATION IN PROGRESS**
+
+- [Contract](phase%20003/contract.md)
+- [Findings](phase%20003/findings.md)
+- Closeout: created after the implementation squash merge.
+
 ## Pipeline
 
 - [Pipeline 001–010](pipeline/pipeline-001-010.md)
